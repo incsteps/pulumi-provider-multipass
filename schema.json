@@ -1,0 +1,287 @@
+{
+  "name": "multipass",
+  "displayName": "Multipass",
+  "version": "v0.1.0",
+  "description": "A Pulumi native provider for Canonical Multipass — declarative, snapshot-aware VM management via the multipass CLI.",
+  "keywords": [
+    "pulumi",
+    "multipass",
+    "vm",
+    "canonical",
+    "category/infrastructure"
+  ],
+  "homepage": "https://github.com/incsteps/pulumi-provider-multipass",
+  "license": "Apache-2.0",
+  "repository": "https://github.com/incsteps/pulumi-provider-multipass",
+  "pluginDownloadURL": "github://api.github.com/incsteps/pulumi-provider-multipass",
+  "namespace": "incsteps",
+  "language": {
+    "go": {
+      "generateResourceContainerTypes": true,
+      "importBasePath": "github.com/incsteps/pulumi-provider-multipass/sdk/go/multipass",
+      "respectSchemaVersion": true
+    },
+    "nodejs": {
+      "packageName": "@incsteps/pulumi-multipass",
+      "respectSchemaVersion": true
+    }
+  },
+  "config": {
+    "variables": {
+      "launchTimeout": {
+        "type": "integer",
+        "description": "Seconds to wait for an instance to become Running. Default 300.",
+        "default": 300
+      },
+      "multipassBin": {
+        "type": "string",
+        "description": "Path to the multipass binary. Defaults to 'multipass' in PATH.",
+        "default": ""
+      },
+      "operationTimeout": {
+        "type": "integer",
+        "description": "Seconds to wait for general CLI operations. Default 60.",
+        "default": 60
+      }
+    }
+  },
+  "provider": {
+    "properties": {
+      "launchTimeout": {
+        "type": "integer",
+        "description": "Seconds to wait for an instance to become Running. Default 300.",
+        "default": 300
+      },
+      "multipassBin": {
+        "type": "string",
+        "description": "Path to the multipass binary. Defaults to 'multipass' in PATH.",
+        "default": ""
+      },
+      "operationTimeout": {
+        "type": "integer",
+        "description": "Seconds to wait for general CLI operations. Default 60.",
+        "default": 60
+      }
+    },
+    "inputProperties": {
+      "launchTimeout": {
+        "type": "integer",
+        "description": "Seconds to wait for an instance to become Running. Default 300.",
+        "default": 300
+      },
+      "multipassBin": {
+        "type": "string",
+        "description": "Path to the multipass binary. Defaults to 'multipass' in PATH.",
+        "default": ""
+      },
+      "operationTimeout": {
+        "type": "integer",
+        "description": "Seconds to wait for general CLI operations. Default 60.",
+        "default": 60
+      }
+    }
+  },
+  "resources": {
+    "multipass:resources:Instance": {
+      "description": "A Multipass virtual machine instance.",
+      "properties": {
+        "allIpv4": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "cloudinit": {
+          "type": "string"
+        },
+        "cpus": {
+          "type": "integer",
+          "default": 1
+        },
+        "disk": {
+          "type": "string",
+          "default": "5G"
+        },
+        "image": {
+          "type": "string",
+          "default": "24.04"
+        },
+        "imageHash": {
+          "type": "string"
+        },
+        "imageRelease": {
+          "type": "string"
+        },
+        "ipv4": {
+          "type": "string"
+        },
+        "memory": {
+          "type": "string",
+          "default": "1G"
+        },
+        "name": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "ipv4",
+        "allIpv4",
+        "state",
+        "imageHash",
+        "imageRelease"
+      ],
+      "inputProperties": {
+        "cloudinit": {
+          "type": "string"
+        },
+        "cpus": {
+          "type": "integer",
+          "default": 1
+        },
+        "disk": {
+          "type": "string",
+          "default": "5G"
+        },
+        "image": {
+          "type": "string",
+          "default": "24.04"
+        },
+        "memory": {
+          "type": "string",
+          "default": "1G"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "requiredInputs": [
+        "name"
+      ]
+    },
+    "multipass:resources:Mount": {
+      "description": "A host directory mount into a Multipass virtual machine instance.",
+      "properties": {
+        "instanceName": {
+          "type": "string"
+        },
+        "mountType": {
+          "type": "string",
+          "default": "native"
+        },
+        "sourcePath": {
+          "type": "string"
+        },
+        "targetPath": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "instanceName",
+        "sourcePath",
+        "targetPath"
+      ],
+      "inputProperties": {
+        "instanceName": {
+          "type": "string"
+        },
+        "mountType": {
+          "type": "string",
+          "default": "native"
+        },
+        "sourcePath": {
+          "type": "string"
+        },
+        "targetPath": {
+          "type": "string"
+        }
+      },
+      "requiredInputs": [
+        "instanceName",
+        "sourcePath",
+        "targetPath"
+      ]
+    },
+    "multipass:resources:Snapshot": {
+      "description": "A snapshot of a Multipass virtual machine instance.",
+      "properties": {
+        "comment": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "instanceName": {
+          "type": "string"
+        },
+        "parent": {
+          "type": "string"
+        },
+        "size": {
+          "type": "string"
+        },
+        "snapshotName": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "instanceName",
+        "snapshotName",
+        "createdAt",
+        "parent",
+        "size"
+      ],
+      "inputProperties": {
+        "comment": {
+          "type": "string"
+        },
+        "instanceName": {
+          "type": "string"
+        },
+        "snapshotName": {
+          "type": "string"
+        }
+      },
+      "requiredInputs": [
+        "instanceName",
+        "snapshotName"
+      ]
+    }
+  },
+  "functions": {
+    "multipass:functions:restore": {
+      "inputs": {
+        "properties": {
+          "destructiveRestore": {
+            "type": "boolean"
+          },
+          "instanceName": {
+            "type": "string"
+          },
+          "snapshotName": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "required": [
+          "instanceName",
+          "snapshotName"
+        ]
+      },
+      "outputs": {
+        "properties": {
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "type": "object"
+      }
+    }
+  }
+}

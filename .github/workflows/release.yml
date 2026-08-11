@@ -1,0 +1,96 @@
+name: release
+
+# Publishes the provider so downstream stacks can consume it without a source
+# checkout. Tag a version to trigger it:
+#
+#     git tag v0.1.0 && git push origin v0.1.0
+#
+# Two artifacts come out:
+#   1. Plugin tarballs attached to the GitHub release. The provider advertises
+#      pluginDownloadURL = github://api.github.com/incsteps/pulumi-provider-multipass,
+#      so `pulumi plugin install resource multipass v0.1.0` resolves them here.
+#      Asset names MUST stay in Pulumi's convention:
+#        pulumi-resource-<name>-v<version>-<os>-<arch>.tar.gz
+#   2. The nodejs SDK, published to npm as @incsteps/pulumi-multipass.
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to build (e.g. v0.1.0). Dry run — publishes nothing."
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  plugins:
+    name: build plugin tarballs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Resolve version
+        id: v
+        run: echo "version=${{ github.event.inputs.version || github.ref_name }}" >> "$GITHUB_OUTPUT"
+
+      - name: Cross-compile
+        env:
+          VERSION: ${{ steps.v.outputs.version }}
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          for target in linux/amd64 linux/arm64 darwin/amd64 darwin/arm64 windows/amd64; do
+            os="${target%/*}"; arch="${target#*/}"
+            bin="pulumi-resource-multipass"
+            [ "$os" = "windows" ] && bin="$bin.exe"
+            echo "==> $os/$arch"
+            GOOS="$os" GOARCH="$arch" CGO_ENABLED=0 \
+              go build -trimpath -ldflags="-s -w" -o "dist/$bin" ./cmd/pulumi-resource-multipass
+            tar -czf "dist/pulumi-resource-multipass-${VERSION}-${os}-${arch}.tar.gz" -C dist "$bin"
+            rm -f "dist/$bin"
+          done
+          ls -la dist/
+
+      - name: Attach to release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.tar.gz
+          generate_release_notes: true
+
+  npm:
+    name: publish nodejs SDK
+    needs: plugins
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Build SDK
+        working-directory: sdk/nodejs
+        run: |
+          npm install
+          npm run build
+          # Pulumi's generated SDK compiles into ./bin, which is what ships.
+          cp package.json README.md bin/ 2>/dev/null || true
+
+      - name: Publish
+        # Skipped automatically until an NPM_TOKEN secret is configured on the repo.
+        if: ${{ env.NODE_AUTH_TOKEN != '' }}
+        working-directory: sdk/nodejs/bin
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public

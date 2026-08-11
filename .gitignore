@@ -1,0 +1,12 @@
+# Built provider binary
+bin/
+
+# Node package dependencies (examples use npm-managed Pulumi SDKs)
+node_modules/
+
+# Pulumi stack state (local backends, dev stacks)
+.pulumi/
+
+# Go build cache
+*.test
+coverage.out
