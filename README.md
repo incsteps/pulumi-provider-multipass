@@ -45,7 +45,7 @@ pulumi plugin install resource multipass v0.1.0 \
 Then add the SDK to your project:
 
 ```bash
-npm install @incsteps/pulumi-multipass
+pulumi package add multipass
 ```
 
 ### Usage
