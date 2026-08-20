@@ -2,6 +2,8 @@
   "name": "multipass",
   "displayName": "Multipass",
   "version": "v0.1.0",
+  "logoUrl": "https://avatars.githubusercontent.com/u/190762878?s=400&u=6787a3acec8b8d806017e64b97a6007acf2ee70a&v=4",
+  "publisher": "Incremental Steps",
   "description": "A Pulumi native provider for Canonical Multipass — declarative, snapshot-aware VM management via the multipass CLI.",
   "keywords": [
     "pulumi",
