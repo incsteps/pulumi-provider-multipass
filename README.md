@@ -53,7 +53,7 @@ npm install @incsteps/pulumi-multipass
 ```typescript
 import * as multipass from "@incsteps/pulumi-multipass";
 
-const vm = new multipass.Instance("dev", {
+const vm = new multipass.resources.Instance("dev", {
     name:   "dev",
     image:  "24.04",
     cpus:   2,
