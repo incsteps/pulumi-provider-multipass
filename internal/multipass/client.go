@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
+	"runtime"
 	"strings"
 )
 
@@ -43,6 +45,37 @@ func (c *Client) defaultExec(ctx context.Context, name string, args ...string) (
 	return out.Bytes(), nil
 }
 
+// cloudInitDir returns a directory the multipass binary can actually read.
+//
+// On Linux, Multipass is normally installed as a snap, and snap confinement
+// denies it access to the host's /tmp. Writing the cloud-init there and passing
+// the path to --cloud-init fails with:
+//
+//	Could not load cloud-init configuration: bad file: /tmp/multipass-cloudinit-*.yaml
+//
+// The snap does have access to the user's home directory via the `home`
+// interface, so prefer a directory under $HOME on Linux. An explicit TMPDIR
+// still wins, so a caller can override this. macOS is unaffected, since
+// Multipass is not confined there; returning "" leaves os.CreateTemp on its
+// default of os.TempDir().
+func cloudInitDir() string {
+	if d := os.Getenv("TMPDIR"); d != "" {
+		return d
+	}
+	if runtime.GOOS != "linux" {
+		return ""
+	}
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return ""
+	}
+	d := filepath.Join(home, ".cache", "pulumi-multipass")
+	if err := os.MkdirAll(d, 0o700); err != nil {
+		return ""
+	}
+	return d
+}
+
 // Launch creates and starts a new Multipass instance.
 // If args.Cloudinit is non-empty it is written to a temp file and passed via --cloud-init.
 func (c *Client) Launch(ctx context.Context, args LaunchArgs) (*InstanceInfo, error) {
@@ -56,7 +89,7 @@ func (c *Client) Launch(ctx context.Context, args LaunchArgs) (*InstanceInfo, er
 
 	var tmpFile string
 	if args.Cloudinit != "" {
-		f, err := os.CreateTemp("", "multipass-cloudinit-*.yaml")
+		f, err := os.CreateTemp(cloudInitDir(), "multipass-cloudinit-*.yaml")
 		if err != nil {
 			return nil, fmt.Errorf("creating cloud-init temp file: %w", err)
 		}
