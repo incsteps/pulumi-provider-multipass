@@ -1,4 +1,4 @@
-VERSION    = v0.1.0
+VERSION    = v0.1.1
 BINARY     = pulumi-resource-multipass
 PLUGIN_DIR = $(HOME)/.pulumi/plugins/resource-multipass-$(VERSION)
 

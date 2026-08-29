@@ -84,13 +84,40 @@ jobs:
         run: |
           npm install
           npm run build
-          # Pulumi's generated SDK compiles into ./bin, which is what ships.
-          cp package.json README.md bin/ 2>/dev/null || true
+          # `make gen-sdk` regenerates this package.json from the schema and drops
+          # the entry points, so reassert them here. Without `main` the published
+          # package is unloadable: Pulumi's Node runtime falls back to index.js in
+          # the package root, finds only TypeScript sources, and fails with
+          #   SyntaxError: Cannot use import statement outside a module
+          node -e '
+            const fs = require("fs");
+            const p = JSON.parse(fs.readFileSync("package.json", "utf8"));
+            p.main = "bin/index.js";
+            p.types = "bin/index.d.ts";
+            p.files = ["bin"];
+            fs.writeFileSync("package.json", JSON.stringify(p, null, 4) + "\n");
+          '
+          cp README.md bin/ 2>/dev/null || true
+
+      # A tarball that ships .ts without a compiled entry point installs cleanly
+      # and only fails at `pulumi up`, which is the worst place to find out.
+      - name: Verify the tarball is loadable
+        working-directory: sdk/nodejs
+        run: |
+          npm pack --dry-run --json > /tmp/pack.json
+          node -e '
+            const files = require("/tmp/pack.json")[0].files.map(f => f.path);
+            const entry = files.includes("bin/index.js");
+            const ts = files.filter(f => f.endsWith(".ts") && !f.endsWith(".d.ts"));
+            if (!entry) { console.error("FAIL: bin/index.js is not in the tarball"); process.exit(1); }
+            if (ts.length) { console.error("FAIL: TypeScript sources would ship: " + ts.join(", ")); process.exit(1); }
+            console.log("ok: " + files.length + " files, compiled entry point present");
+          '
 
       - name: Publish
         # Skipped automatically until an NPM_TOKEN secret is configured on the repo.
         if: ${{ env.NODE_AUTH_TOKEN != '' }}
-        working-directory: sdk/nodejs/bin
+        working-directory: sdk/nodejs
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish --access public

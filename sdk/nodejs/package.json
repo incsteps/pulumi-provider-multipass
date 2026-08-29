@@ -1,6 +1,7 @@
 {
     "name": "@incsteps/pulumi-multipass",
-    "version": "0.1.0",
+    "version": "0.1.1",
+    "description": "Pulumi provider for Canonical Multipass VMs.",
     "keywords": [
         "pulumi",
         "multipass",
@@ -11,6 +12,11 @@
     "homepage": "https://github.com/incsteps/pulumi-provider-multipass",
     "repository": "https://github.com/incsteps/pulumi-provider-multipass",
     "license": "Apache-2.0",
+    "main": "bin/index.js",
+    "types": "bin/index.d.ts",
+    "files": [
+        "bin"
+    ],
     "scripts": {
         "build": "tsc"
     },
@@ -24,7 +30,7 @@
     "pulumi": {
         "resource": true,
         "name": "multipass",
-        "version": "0.1.0",
+        "version": "0.1.1",
         "server": "github://api.github.com/incsteps/pulumi-provider-multipass"
     }
 }
