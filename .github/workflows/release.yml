@@ -23,6 +23,7 @@ on:
         required: true
 
 permissions:
+  id-token: write  # Required for OIDC
   contents: write
 
 jobs:
@@ -115,9 +116,5 @@ jobs:
           '
 
       - name: Publish
-        # Skipped automatically until an NPM_TOKEN secret is configured on the repo.
-        if: ${{ env.NODE_AUTH_TOKEN != '' }}
         working-directory: sdk/nodejs
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish --access public
