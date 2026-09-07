@@ -75,10 +75,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: "20"
           registry-url: "https://registry.npmjs.org"
+          package-manager-cache: false
 
       - name: Build SDK
         working-directory: sdk/nodejs
@@ -117,4 +118,6 @@ jobs:
 
       - name: Publish
         working-directory: sdk/nodejs
-        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public --provenance
