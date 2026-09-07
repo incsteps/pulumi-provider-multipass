@@ -13,7 +13,7 @@ Multipass is a tool to launch and manage Ubuntu virtual machines on macOS, Linux
 The Multipass provider is distributed as GitHub releases. Install the resource plugin using the Pulumi CLI:
 
 ```bash
-pulumi plugin install resource multipass v0.1.0 \\
+pulumi plugin install resource multipass v0.2.0 \\
   --server github://[api.github.com/incsteps/pulumi-provider-multipass](https://api.github.com/incsteps/pulumi-provider-multipass)
 ```
 

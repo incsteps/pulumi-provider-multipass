@@ -38,7 +38,7 @@ The provider is distributed as GitHub release assets rather than through the pub
 `pluginDownloadURL` is baked into the schema, so the CLI knows where to look:
 
 ```bash
-pulumi plugin install resource multipass v0.1.0 \
+pulumi plugin install resource multipass v0.2.0 \
   --server github://api.github.com/incsteps/pulumi-provider-multipass
 ```
 
@@ -72,7 +72,7 @@ Requires **Go 1.24+**, the **Pulumi CLI**, and **Multipass** installed on macOS 
 
 ```bash
 make build      # compile bin/pulumi-resource-multipass
-make install    # install into ~/.pulumi/plugins/resource-multipass-v0.1.0/
+make install    # install into ~/.pulumi/plugins/resource-multipass-v0.2.0/
 make test       # unit tests (mocked CLI — no VMs created)
 ```
 
