@@ -8,7 +8,7 @@ import (
 
 const (
 	Name      = "multipass"
-	Version   = "v0.1.0"
+	Version   = "v0.2.0"
 	Namespace = "incsteps"
 
 	// Repository is the canonical source location. It also seeds the
