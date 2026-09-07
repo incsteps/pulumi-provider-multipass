@@ -1,6 +1,6 @@
 {
     "name": "@incsteps/pulumi-multipass",
-    "version": "0.1.1",
+    "version": "0.2.0",
     "description": "Pulumi provider for Canonical Multipass VMs.",
     "keywords": [
         "pulumi",
@@ -30,7 +30,7 @@
     "pulumi": {
         "resource": true,
         "name": "multipass",
-        "version": "0.1.1",
+        "version": "0.2.0",
         "server": "github://api.github.com/incsteps/pulumi-provider-multipass"
     }
 }
