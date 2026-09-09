@@ -1,4 +1,4 @@
-index_md_content = """---
+---
 title: Multipass Provider
 meta_desc: Provides an overview of the Pulumi Multipass provider, including installation and usage examples.
 layout: overview
