@@ -35,14 +35,32 @@ export class Instance extends pulumi.CustomResource {
     }
 
     declare public /*out*/ readonly allIpv4: pulumi.Output<string[]>;
+    /**
+     * Path to a cloud-init user-data file or inline cloud-init configuration.
+     */
     declare public readonly cloudinit: pulumi.Output<string | undefined>;
-    declare public readonly cpus: pulumi.Output<number | undefined>;
-    declare public readonly disk: pulumi.Output<string | undefined>;
-    declare public readonly image: pulumi.Output<string | undefined>;
+    /**
+     * The number of CPUs to allocate to the instance. Defaults to 1.
+     */
+    declare public readonly cpus: pulumi.Output<number>;
+    /**
+     * The disk size to allocate (e.g., '5G', '10G'). Defaults to '5G'.
+     */
+    declare public readonly disk: pulumi.Output<string>;
+    /**
+     * The OS image to launch (e.g., '24.04', 'daily:24.04'). Defaults to '24.04'.
+     */
+    declare public readonly image: pulumi.Output<string>;
     declare public /*out*/ readonly imageHash: pulumi.Output<string>;
     declare public /*out*/ readonly imageRelease: pulumi.Output<string>;
     declare public /*out*/ readonly ipv4: pulumi.Output<string>;
-    declare public readonly memory: pulumi.Output<string | undefined>;
+    /**
+     * The amount of RAM to allocate (e.g., '1G', '2048M'). Defaults to '1G'.
+     */
+    declare public readonly memory: pulumi.Output<string>;
+    /**
+     * The unique name of the Multipass virtual machine instance.
+     */
     declare public readonly name: pulumi.Output<string>;
     declare public /*out*/ readonly state: pulumi.Output<string>;
 
@@ -93,10 +111,28 @@ export class Instance extends pulumi.CustomResource {
  * The set of arguments for constructing a Instance resource.
  */
 export interface InstanceArgs {
-    cloudinit?: pulumi.Input<string>;
-    cpus?: pulumi.Input<number>;
-    disk?: pulumi.Input<string>;
-    image?: pulumi.Input<string>;
-    memory?: pulumi.Input<string>;
+    /**
+     * Path to a cloud-init user-data file or inline cloud-init configuration.
+     */
+    cloudinit?: pulumi.Input<string | undefined>;
+    /**
+     * The number of CPUs to allocate to the instance. Defaults to 1.
+     */
+    cpus?: pulumi.Input<number | undefined>;
+    /**
+     * The disk size to allocate (e.g., '5G', '10G'). Defaults to '5G'.
+     */
+    disk?: pulumi.Input<string | undefined>;
+    /**
+     * The OS image to launch (e.g., '24.04', 'daily:24.04'). Defaults to '24.04'.
+     */
+    image?: pulumi.Input<string | undefined>;
+    /**
+     * The amount of RAM to allocate (e.g., '1G', '2048M'). Defaults to '1G'.
+     */
+    memory?: pulumi.Input<string | undefined>;
+    /**
+     * The unique name of the Multipass virtual machine instance.
+     */
     name: pulumi.Input<string>;
 }

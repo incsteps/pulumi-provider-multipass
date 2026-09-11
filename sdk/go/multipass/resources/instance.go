@@ -16,17 +16,23 @@ import (
 type Instance struct {
 	pulumi.CustomResourceState
 
-	AllIpv4      pulumi.StringArrayOutput `pulumi:"allIpv4"`
-	Cloudinit    pulumi.StringPtrOutput   `pulumi:"cloudinit"`
-	Cpus         pulumi.IntPtrOutput      `pulumi:"cpus"`
-	Disk         pulumi.StringPtrOutput   `pulumi:"disk"`
-	Image        pulumi.StringPtrOutput   `pulumi:"image"`
-	ImageHash    pulumi.StringOutput      `pulumi:"imageHash"`
-	ImageRelease pulumi.StringOutput      `pulumi:"imageRelease"`
-	Ipv4         pulumi.StringOutput      `pulumi:"ipv4"`
-	Memory       pulumi.StringPtrOutput   `pulumi:"memory"`
-	Name         pulumi.StringOutput      `pulumi:"name"`
-	State        pulumi.StringOutput      `pulumi:"state"`
+	AllIpv4 pulumi.StringArrayOutput `pulumi:"allIpv4"`
+	// Path to a cloud-init user-data file or inline cloud-init configuration.
+	Cloudinit pulumi.StringPtrOutput `pulumi:"cloudinit"`
+	// The number of CPUs to allocate to the instance. Defaults to 1.
+	Cpus pulumi.IntOutput `pulumi:"cpus"`
+	// The disk size to allocate (e.g., '5G', '10G'). Defaults to '5G'.
+	Disk pulumi.StringOutput `pulumi:"disk"`
+	// The OS image to launch (e.g., '24.04', 'daily:24.04'). Defaults to '24.04'.
+	Image        pulumi.StringOutput `pulumi:"image"`
+	ImageHash    pulumi.StringOutput `pulumi:"imageHash"`
+	ImageRelease pulumi.StringOutput `pulumi:"imageRelease"`
+	Ipv4         pulumi.StringOutput `pulumi:"ipv4"`
+	// The amount of RAM to allocate (e.g., '1G', '2048M'). Defaults to '1G'.
+	Memory pulumi.StringOutput `pulumi:"memory"`
+	// The unique name of the Multipass virtual machine instance.
+	Name  pulumi.StringOutput `pulumi:"name"`
+	State pulumi.StringOutput `pulumi:"state"`
 }
 
 // NewInstance registers a new resource with the given unique name, arguments, and options.
@@ -84,22 +90,34 @@ func (InstanceState) ElementType() reflect.Type {
 }
 
 type instanceArgs struct {
+	// Path to a cloud-init user-data file or inline cloud-init configuration.
 	Cloudinit *string `pulumi:"cloudinit"`
-	Cpus      *int    `pulumi:"cpus"`
-	Disk      *string `pulumi:"disk"`
-	Image     *string `pulumi:"image"`
-	Memory    *string `pulumi:"memory"`
-	Name      string  `pulumi:"name"`
+	// The number of CPUs to allocate to the instance. Defaults to 1.
+	Cpus *int `pulumi:"cpus"`
+	// The disk size to allocate (e.g., '5G', '10G'). Defaults to '5G'.
+	Disk *string `pulumi:"disk"`
+	// The OS image to launch (e.g., '24.04', 'daily:24.04'). Defaults to '24.04'.
+	Image *string `pulumi:"image"`
+	// The amount of RAM to allocate (e.g., '1G', '2048M'). Defaults to '1G'.
+	Memory *string `pulumi:"memory"`
+	// The unique name of the Multipass virtual machine instance.
+	Name string `pulumi:"name"`
 }
 
 // The set of arguments for constructing a Instance resource.
 type InstanceArgs struct {
+	// Path to a cloud-init user-data file or inline cloud-init configuration.
 	Cloudinit pulumi.StringPtrInput
-	Cpus      pulumi.IntPtrInput
-	Disk      pulumi.StringPtrInput
-	Image     pulumi.StringPtrInput
-	Memory    pulumi.StringPtrInput
-	Name      pulumi.StringInput
+	// The number of CPUs to allocate to the instance. Defaults to 1.
+	Cpus pulumi.IntPtrInput
+	// The disk size to allocate (e.g., '5G', '10G'). Defaults to '5G'.
+	Disk pulumi.StringPtrInput
+	// The OS image to launch (e.g., '24.04', 'daily:24.04'). Defaults to '24.04'.
+	Image pulumi.StringPtrInput
+	// The amount of RAM to allocate (e.g., '1G', '2048M'). Defaults to '1G'.
+	Memory pulumi.StringPtrInput
+	// The unique name of the Multipass virtual machine instance.
+	Name pulumi.StringInput
 }
 
 func (InstanceArgs) ElementType() reflect.Type {
@@ -193,20 +211,24 @@ func (o InstanceOutput) AllIpv4() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v *Instance) pulumi.StringArrayOutput { return v.AllIpv4 }).(pulumi.StringArrayOutput)
 }
 
+// Path to a cloud-init user-data file or inline cloud-init configuration.
 func (o InstanceOutput) Cloudinit() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *Instance) pulumi.StringPtrOutput { return v.Cloudinit }).(pulumi.StringPtrOutput)
 }
 
-func (o InstanceOutput) Cpus() pulumi.IntPtrOutput {
-	return o.ApplyT(func(v *Instance) pulumi.IntPtrOutput { return v.Cpus }).(pulumi.IntPtrOutput)
+// The number of CPUs to allocate to the instance. Defaults to 1.
+func (o InstanceOutput) Cpus() pulumi.IntOutput {
+	return o.ApplyT(func(v *Instance) pulumi.IntOutput { return v.Cpus }).(pulumi.IntOutput)
 }
 
-func (o InstanceOutput) Disk() pulumi.StringPtrOutput {
-	return o.ApplyT(func(v *Instance) pulumi.StringPtrOutput { return v.Disk }).(pulumi.StringPtrOutput)
+// The disk size to allocate (e.g., '5G', '10G'). Defaults to '5G'.
+func (o InstanceOutput) Disk() pulumi.StringOutput {
+	return o.ApplyT(func(v *Instance) pulumi.StringOutput { return v.Disk }).(pulumi.StringOutput)
 }
 
-func (o InstanceOutput) Image() pulumi.StringPtrOutput {
-	return o.ApplyT(func(v *Instance) pulumi.StringPtrOutput { return v.Image }).(pulumi.StringPtrOutput)
+// The OS image to launch (e.g., '24.04', 'daily:24.04'). Defaults to '24.04'.
+func (o InstanceOutput) Image() pulumi.StringOutput {
+	return o.ApplyT(func(v *Instance) pulumi.StringOutput { return v.Image }).(pulumi.StringOutput)
 }
 
 func (o InstanceOutput) ImageHash() pulumi.StringOutput {
@@ -221,10 +243,12 @@ func (o InstanceOutput) Ipv4() pulumi.StringOutput {
 	return o.ApplyT(func(v *Instance) pulumi.StringOutput { return v.Ipv4 }).(pulumi.StringOutput)
 }
 
-func (o InstanceOutput) Memory() pulumi.StringPtrOutput {
-	return o.ApplyT(func(v *Instance) pulumi.StringPtrOutput { return v.Memory }).(pulumi.StringPtrOutput)
+// The amount of RAM to allocate (e.g., '1G', '2048M'). Defaults to '1G'.
+func (o InstanceOutput) Memory() pulumi.StringOutput {
+	return o.ApplyT(func(v *Instance) pulumi.StringOutput { return v.Memory }).(pulumi.StringOutput)
 }
 
+// The unique name of the Multipass virtual machine instance.
 func (o InstanceOutput) Name() pulumi.StringOutput {
 	return o.ApplyT(func(v *Instance) pulumi.StringOutput { return v.Name }).(pulumi.StringOutput)
 }

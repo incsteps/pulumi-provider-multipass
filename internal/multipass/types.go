@@ -7,10 +7,10 @@ type InfoOutput struct {
 
 // InstanceInfo holds the per-instance fields from `multipass info --format json`.
 type InstanceInfo struct {
-	State   string            `json:"state"`
-	IPv4    []string          `json:"ipv4"`
-	Image   *ImageInfo        `json:"image"`
-	Mounts  map[string]*Mount `json:"mounts"`
+	State  string            `json:"state"`
+	IPv4   []string          `json:"ipv4"`
+	Image  *ImageInfo        `json:"image"`
+	Mounts map[string]*Mount `json:"mounts"`
 	// Snapshots is present when --snapshots flag is used.
 	// The key is the snapshot name.
 	Snapshots map[string]*SnapshotInfo `json:"snapshots"`
@@ -24,10 +24,10 @@ type ImageInfo struct {
 
 // Mount holds a single mount entry from `multipass info`.
 type Mount struct {
-	SourcePath string        `json:"source_path"`
-	UIDMappings []string     `json:"uid_mappings"`
-	GIDMappings []string     `json:"gid_mappings"`
-	MountType   string       `json:"mount_type"`
+	SourcePath  string   `json:"source_path"`
+	UIDMappings []string `json:"uid_mappings"`
+	GIDMappings []string `json:"gid_mappings"`
+	MountType   string   `json:"mount_type"`
 }
 
 // SnapshotInfo holds a single snapshot entry from `multipass info --snapshots`.
@@ -50,6 +50,7 @@ type LaunchArgs struct {
 	Memory    string
 	Disk      string
 	Cloudinit string // inline YAML — written to a temp file, not a path
+	Timeout   int
 }
 
 // SnapshotArgs holds the parameters for creating a snapshot.

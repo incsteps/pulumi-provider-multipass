@@ -34,9 +34,21 @@ export class Mount extends pulumi.CustomResource {
         return obj['__pulumiType'] === Mount.__pulumiType;
     }
 
+    /**
+     * The name of the Multipass VM instance.
+     */
     declare public readonly instanceName: pulumi.Output<string>;
-    declare public readonly mountType: pulumi.Output<string | undefined>;
+    /**
+     * The mount strategy to use (e.g., 'native' or 'classic'). Defaults to 'native'.
+     */
+    declare public readonly mountType: pulumi.Output<string>;
+    /**
+     * The host directory path to mount into the VM.
+     */
     declare public readonly sourcePath: pulumi.Output<string>;
+    /**
+     * The target directory path inside the VM instance.
+     */
     declare public readonly targetPath: pulumi.Output<string>;
 
     /**
@@ -78,8 +90,20 @@ export class Mount extends pulumi.CustomResource {
  * The set of arguments for constructing a Mount resource.
  */
 export interface MountArgs {
+    /**
+     * The name of the Multipass VM instance.
+     */
     instanceName: pulumi.Input<string>;
-    mountType?: pulumi.Input<string>;
+    /**
+     * The mount strategy to use (e.g., 'native' or 'classic'). Defaults to 'native'.
+     */
+    mountType?: pulumi.Input<string | undefined>;
+    /**
+     * The host directory path to mount into the VM.
+     */
     sourcePath: pulumi.Input<string>;
+    /**
+     * The target directory path inside the VM instance.
+     */
     targetPath: pulumi.Input<string>;
 }

@@ -107,7 +107,7 @@ func (c *Client) Launch(ctx context.Context, args LaunchArgs) (*InstanceInfo, er
 	// Allow up to 15 minutes for cloud-init to complete. The default Multipass
 	// timeout (5 min) is too short when cloud-init installs large packages (JDK,
 	// Apptainer, Docker images).
-	cmdArgs = append(cmdArgs, "--timeout", "900")
+	cmdArgs = append(cmdArgs, "--timeout", fmt.Sprintf("%d", args.Timeout))
 
 	if args.Image != "" {
 		cmdArgs = append(cmdArgs, args.Image)

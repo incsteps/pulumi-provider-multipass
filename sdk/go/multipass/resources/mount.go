@@ -16,10 +16,14 @@ import (
 type Mount struct {
 	pulumi.CustomResourceState
 
-	InstanceName pulumi.StringOutput    `pulumi:"instanceName"`
-	MountType    pulumi.StringPtrOutput `pulumi:"mountType"`
-	SourcePath   pulumi.StringOutput    `pulumi:"sourcePath"`
-	TargetPath   pulumi.StringOutput    `pulumi:"targetPath"`
+	// The name of the Multipass VM instance.
+	InstanceName pulumi.StringOutput `pulumi:"instanceName"`
+	// The mount strategy to use (e.g., 'native' or 'classic'). Defaults to 'native'.
+	MountType pulumi.StringOutput `pulumi:"mountType"`
+	// The host directory path to mount into the VM.
+	SourcePath pulumi.StringOutput `pulumi:"sourcePath"`
+	// The target directory path inside the VM instance.
+	TargetPath pulumi.StringOutput `pulumi:"targetPath"`
 }
 
 // NewMount registers a new resource with the given unique name, arguments, and options.
@@ -74,18 +78,26 @@ func (MountState) ElementType() reflect.Type {
 }
 
 type mountArgs struct {
-	InstanceName string  `pulumi:"instanceName"`
-	MountType    *string `pulumi:"mountType"`
-	SourcePath   string  `pulumi:"sourcePath"`
-	TargetPath   string  `pulumi:"targetPath"`
+	// The name of the Multipass VM instance.
+	InstanceName string `pulumi:"instanceName"`
+	// The mount strategy to use (e.g., 'native' or 'classic'). Defaults to 'native'.
+	MountType *string `pulumi:"mountType"`
+	// The host directory path to mount into the VM.
+	SourcePath string `pulumi:"sourcePath"`
+	// The target directory path inside the VM instance.
+	TargetPath string `pulumi:"targetPath"`
 }
 
 // The set of arguments for constructing a Mount resource.
 type MountArgs struct {
+	// The name of the Multipass VM instance.
 	InstanceName pulumi.StringInput
-	MountType    pulumi.StringPtrInput
-	SourcePath   pulumi.StringInput
-	TargetPath   pulumi.StringInput
+	// The mount strategy to use (e.g., 'native' or 'classic'). Defaults to 'native'.
+	MountType pulumi.StringPtrInput
+	// The host directory path to mount into the VM.
+	SourcePath pulumi.StringInput
+	// The target directory path inside the VM instance.
+	TargetPath pulumi.StringInput
 }
 
 func (MountArgs) ElementType() reflect.Type {
@@ -175,18 +187,22 @@ func (o MountOutput) ToMountOutputWithContext(ctx context.Context) MountOutput {
 	return o
 }
 
+// The name of the Multipass VM instance.
 func (o MountOutput) InstanceName() pulumi.StringOutput {
 	return o.ApplyT(func(v *Mount) pulumi.StringOutput { return v.InstanceName }).(pulumi.StringOutput)
 }
 
-func (o MountOutput) MountType() pulumi.StringPtrOutput {
-	return o.ApplyT(func(v *Mount) pulumi.StringPtrOutput { return v.MountType }).(pulumi.StringPtrOutput)
+// The mount strategy to use (e.g., 'native' or 'classic'). Defaults to 'native'.
+func (o MountOutput) MountType() pulumi.StringOutput {
+	return o.ApplyT(func(v *Mount) pulumi.StringOutput { return v.MountType }).(pulumi.StringOutput)
 }
 
+// The host directory path to mount into the VM.
 func (o MountOutput) SourcePath() pulumi.StringOutput {
 	return o.ApplyT(func(v *Mount) pulumi.StringOutput { return v.SourcePath }).(pulumi.StringOutput)
 }
 
+// The target directory path inside the VM instance.
 func (o MountOutput) TargetPath() pulumi.StringOutput {
 	return o.ApplyT(func(v *Mount) pulumi.StringOutput { return v.TargetPath }).(pulumi.StringOutput)
 }

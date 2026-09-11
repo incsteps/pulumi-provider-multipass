@@ -30,22 +30,31 @@ var _ infer.CustomRead[MountArgs, MountState] = (*Mount)(nil)
 var _ infer.CustomDelete[MountState] = (*Mount)(nil)
 var _ infer.CustomDiff[MountArgs, MountState] = (*Mount)(nil)
 var _ infer.Annotated = (*Mount)(nil)
+var _ infer.Annotated = (*MountArgs)(nil)
 
 func (m *Mount) Annotate(a infer.Annotator) {
 	a.Describe(m, "A host directory mount into a Multipass virtual machine instance.")
 }
 
 func (a *MountArgs) Annotate(ann infer.Annotator) {
+	ann.Describe(&a.InstanceName, "The name of the Multipass VM instance.")
+	ann.Describe(&a.SourcePath, "The host directory path to mount into the VM.")
+	ann.Describe(&a.TargetPath, "The target directory path inside the VM instance.")
+	ann.Describe(&a.MountType, "The mount strategy to use (e.g., 'native' or 'classic'). Defaults to 'native'.")
 	ann.SetDefault(&a.MountType, "native")
 }
 
 // Create mounts a directory into a VM.
 func (m *Mount) Create(
-	ctx context.Context, name string, inputs MountArgs, preview bool,
-) (string, MountState, error) {
+	ctx context.Context, req infer.CreateRequest[MountArgs],
+) (infer.CreateResponse[MountState], error) {
+	inputs := req.Inputs
 	id := inputs.InstanceName + ":" + inputs.TargetPath
-	if preview {
-		return id, MountState{MountArgs: inputs}, nil
+	if req.DryRun {
+		return infer.CreateResponse[MountState]{
+			ID:     id,
+			Output: MountState{MountArgs: inputs},
+		}, nil
 	}
 
 	cfg := infer.GetConfig[Config](ctx)
@@ -62,51 +71,59 @@ func (m *Mount) Create(
 		TargetPath:   inputs.TargetPath,
 		MountType:    mountType,
 	}); err != nil {
-		return "", MountState{}, fmt.Errorf("mounting %s into %s:%s: %w",
+		return infer.CreateResponse[MountState]{}, fmt.Errorf("mounting %s into %s:%s: %w",
 			inputs.SourcePath, inputs.InstanceName, inputs.TargetPath, err)
 	}
 
-	return id, MountState{MountArgs: inputs}, nil
+	return infer.CreateResponse[MountState]{ID: id, Output: MountState{MountArgs: inputs}}, nil
 }
 
 // Read checks whether the mount still exists.
 func (m *Mount) Read(
-	ctx context.Context, id string, inputs MountArgs, state MountState,
-) (string, MountArgs, MountState, error) {
+	ctx context.Context, req infer.ReadRequest[MountArgs, MountState],
+) (infer.ReadResponse[MountArgs, MountState], error) {
+	inputs := req.Inputs
 	cfg := infer.GetConfig[Config](ctx)
 	client := multipass.NewClient(cfg.MultipassBin)
 
 	info, err := client.Info(ctx, inputs.InstanceName)
 	if err != nil {
-		return "", inputs, state, fmt.Errorf("reading mounts for %s: %w", inputs.InstanceName, err)
+		return infer.ReadResponse[MountArgs, MountState]{}, fmt.Errorf("reading mounts for %s: %w", inputs.InstanceName, err)
 	}
 	if info == nil {
-		return "", inputs, MountState{}, nil
+		return infer.ReadResponse[MountArgs, MountState]{}, nil
 	}
 
 	if _, ok := info.Mounts[inputs.TargetPath]; ok {
-		return id, inputs, MountState{MountArgs: inputs}, nil
+		return infer.ReadResponse[MountArgs, MountState]{
+			ID:     req.ID,
+			Inputs: inputs,
+			State:  MountState{MountArgs: inputs},
+		}, nil
 	}
 
 	// Mount is absent.
-	return "", inputs, MountState{}, nil
+	return infer.ReadResponse[MountArgs, MountState]{}, nil
 }
 
 // Delete unmounts the directory from the VM.
-func (m *Mount) Delete(ctx context.Context, id string, props MountState) error {
+func (m *Mount) Delete(ctx context.Context, req infer.DeleteRequest[MountState]) (infer.DeleteResponse, error) {
 	cfg := infer.GetConfig[Config](ctx)
 	client := multipass.NewClient(cfg.MultipassBin)
 
-	if err := client.Umount(ctx, props.InstanceName, props.TargetPath); err != nil {
-		return fmt.Errorf("unmounting %s:%s: %w", props.InstanceName, props.TargetPath, err)
+	if err := client.Umount(ctx, req.State.InstanceName, req.State.TargetPath); err != nil {
+		return infer.DeleteResponse{}, fmt.Errorf("unmounting %s:%s: %w", req.State.InstanceName, req.State.TargetPath, err)
 	}
-	return nil
+	return infer.DeleteResponse{}, nil
 }
 
 // Diff marks all input fields as requiring replacement.
 func (m *Mount) Diff(
-	ctx context.Context, id string, olds MountState, news MountArgs,
-) (p.DiffResponse, error) {
+	ctx context.Context, req infer.DiffRequest[MountArgs, MountState],
+) (infer.DiffResponse, error) {
+	olds := req.State
+	news := req.Inputs
+
 	diff := map[string]p.PropertyDiff{}
 	replaceFields := map[string]bool{
 		"instanceName": olds.InstanceName != news.InstanceName,
@@ -123,7 +140,7 @@ func (m *Mount) Diff(
 		}
 	}
 
-	return p.DiffResponse{
+	return infer.DiffResponse{
 		HasChanges:   hasChanges,
 		DetailedDiff: diff,
 	}, nil

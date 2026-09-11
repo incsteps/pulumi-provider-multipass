@@ -22,7 +22,7 @@ export class Provider extends pulumi.ProviderResource {
     /**
      * Path to the multipass binary. Defaults to 'multipass' in PATH.
      */
-    declare public readonly multipassBin: pulumi.Output<string | undefined>;
+    declare public readonly multipassBin: pulumi.Output<string>;
 
     /**
      * Create a Provider resource with the given unique name, arguments, and options.
@@ -51,13 +51,13 @@ export interface ProviderArgs {
     /**
      * Seconds to wait for an instance to become Running. Default 300.
      */
-    launchTimeout?: pulumi.Input<number>;
+    launchTimeout?: pulumi.Input<number | undefined>;
     /**
      * Path to the multipass binary. Defaults to 'multipass' in PATH.
      */
-    multipassBin?: pulumi.Input<string>;
+    multipassBin?: pulumi.Input<string | undefined>;
     /**
      * Seconds to wait for general CLI operations. Default 60.
      */
-    operationTimeout?: pulumi.Input<number>;
+    operationTimeout?: pulumi.Input<number | undefined>;
 }

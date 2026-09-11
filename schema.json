@@ -1,8 +1,7 @@
 {
   "name": "multipass",
   "displayName": "Multipass",
-  "logoUrl": "https://avatars.githubusercontent.com/u/190762878?s=400&u=6787a3acec8b8d806017e64b97a6007acf2ee70a&v=4",
-  "publisher": "Incremental Steps",
+  "version": "v0.3.0",
   "description": "A Pulumi native provider for Canonical Multipass — declarative, snapshot-aware VM management via the multipass CLI.",
   "keywords": [
     "pulumi",
@@ -64,6 +63,11 @@
         "default": 60
       }
     },
+    "required": [
+      "multipassBin",
+      "launchTimeout",
+      "operationTimeout"
+    ],
     "inputProperties": {
       "launchTimeout": {
         "type": "integer",
@@ -93,18 +97,22 @@
           }
         },
         "cloudinit": {
-          "type": "string"
+          "type": "string",
+          "description": "Path to a cloud-init user-data file or inline cloud-init configuration."
         },
         "cpus": {
           "type": "integer",
+          "description": "The number of CPUs to allocate to the instance. Defaults to 1.",
           "default": 1
         },
         "disk": {
           "type": "string",
+          "description": "The disk size to allocate (e.g., '5G', '10G'). Defaults to '5G'.",
           "default": "5G"
         },
         "image": {
           "type": "string",
+          "description": "The OS image to launch (e.g., '24.04', 'daily:24.04'). Defaults to '24.04'.",
           "default": "24.04"
         },
         "imageHash": {
@@ -118,10 +126,12 @@
         },
         "memory": {
           "type": "string",
+          "description": "The amount of RAM to allocate (e.g., '1G', '2048M'). Defaults to '1G'.",
           "default": "1G"
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "description": "The unique name of the Multipass virtual machine instance."
         },
         "state": {
           "type": "string"
@@ -129,6 +139,10 @@
       },
       "required": [
         "name",
+        "image",
+        "cpus",
+        "memory",
+        "disk",
         "ipv4",
         "allIpv4",
         "state",
@@ -137,26 +151,32 @@
       ],
       "inputProperties": {
         "cloudinit": {
-          "type": "string"
+          "type": "string",
+          "description": "Path to a cloud-init user-data file or inline cloud-init configuration."
         },
         "cpus": {
           "type": "integer",
+          "description": "The number of CPUs to allocate to the instance. Defaults to 1.",
           "default": 1
         },
         "disk": {
           "type": "string",
+          "description": "The disk size to allocate (e.g., '5G', '10G'). Defaults to '5G'.",
           "default": "5G"
         },
         "image": {
           "type": "string",
+          "description": "The OS image to launch (e.g., '24.04', 'daily:24.04'). Defaults to '24.04'.",
           "default": "24.04"
         },
         "memory": {
           "type": "string",
+          "description": "The amount of RAM to allocate (e.g., '1G', '2048M'). Defaults to '1G'.",
           "default": "1G"
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "description": "The unique name of the Multipass virtual machine instance."
         }
       },
       "requiredInputs": [
@@ -167,37 +187,46 @@
       "description": "A host directory mount into a Multipass virtual machine instance.",
       "properties": {
         "instanceName": {
-          "type": "string"
+          "type": "string",
+          "description": "The name of the Multipass VM instance."
         },
         "mountType": {
           "type": "string",
+          "description": "The mount strategy to use (e.g., 'native' or 'classic'). Defaults to 'native'.",
           "default": "native"
         },
         "sourcePath": {
-          "type": "string"
+          "type": "string",
+          "description": "The host directory path to mount into the VM."
         },
         "targetPath": {
-          "type": "string"
+          "type": "string",
+          "description": "The target directory path inside the VM instance."
         }
       },
       "required": [
         "instanceName",
         "sourcePath",
-        "targetPath"
+        "targetPath",
+        "mountType"
       ],
       "inputProperties": {
         "instanceName": {
-          "type": "string"
+          "type": "string",
+          "description": "The name of the Multipass VM instance."
         },
         "mountType": {
           "type": "string",
+          "description": "The mount strategy to use (e.g., 'native' or 'classic'). Defaults to 'native'.",
           "default": "native"
         },
         "sourcePath": {
-          "type": "string"
+          "type": "string",
+          "description": "The host directory path to mount into the VM."
         },
         "targetPath": {
-          "type": "string"
+          "type": "string",
+          "description": "The target directory path inside the VM instance."
         }
       },
       "requiredInputs": [
@@ -205,84 +234,6 @@
         "sourcePath",
         "targetPath"
       ]
-    },
-    "multipass:resources:Snapshot": {
-      "description": "A snapshot of a Multipass virtual machine instance.",
-      "properties": {
-        "comment": {
-          "type": "string"
-        },
-        "createdAt": {
-          "type": "string"
-        },
-        "instanceName": {
-          "type": "string"
-        },
-        "parent": {
-          "type": "string"
-        },
-        "size": {
-          "type": "string"
-        },
-        "snapshotName": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "instanceName",
-        "snapshotName",
-        "createdAt",
-        "parent",
-        "size"
-      ],
-      "inputProperties": {
-        "comment": {
-          "type": "string"
-        },
-        "instanceName": {
-          "type": "string"
-        },
-        "snapshotName": {
-          "type": "string"
-        }
-      },
-      "requiredInputs": [
-        "instanceName",
-        "snapshotName"
-      ]
-    }
-  },
-  "functions": {
-    "multipass:functions:restore": {
-      "inputs": {
-        "properties": {
-          "destructiveRestore": {
-            "type": "boolean"
-          },
-          "instanceName": {
-            "type": "string"
-          },
-          "snapshotName": {
-            "type": "string"
-          }
-        },
-        "type": "object",
-        "required": [
-          "instanceName",
-          "snapshotName"
-        ]
-      },
-      "outputs": {
-        "properties": {
-          "status": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "status"
-        ],
-        "type": "object"
-      }
     }
   }
 }

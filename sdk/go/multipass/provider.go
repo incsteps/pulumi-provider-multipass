@@ -15,7 +15,7 @@ type Provider struct {
 	pulumi.ProviderResourceState
 
 	// Path to the multipass binary. Defaults to 'multipass' in PATH.
-	MultipassBin pulumi.StringPtrOutput `pulumi:"multipassBin"`
+	MultipassBin pulumi.StringOutput `pulumi:"multipassBin"`
 }
 
 // NewProvider registers a new resource with the given unique name, arguments, and options.
@@ -100,8 +100,8 @@ func (o ProviderOutput) ToProviderOutputWithContext(ctx context.Context) Provide
 }
 
 // Path to the multipass binary. Defaults to 'multipass' in PATH.
-func (o ProviderOutput) MultipassBin() pulumi.StringPtrOutput {
-	return o.ApplyT(func(v *Provider) pulumi.StringPtrOutput { return v.MultipassBin }).(pulumi.StringPtrOutput)
+func (o ProviderOutput) MultipassBin() pulumi.StringOutput {
+	return o.ApplyT(func(v *Provider) pulumi.StringOutput { return v.MultipassBin }).(pulumi.StringOutput)
 }
 
 func init() {

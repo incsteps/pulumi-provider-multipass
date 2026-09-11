@@ -44,47 +44,60 @@ func (i *Instance) Annotate(a infer.Annotator) {
 }
 
 func (a *InstanceArgs) Annotate(ann infer.Annotator) {
+	ann.Describe(&a.Name, "The unique name of the Multipass virtual machine instance.")
+	ann.Describe(&a.Image, "The OS image to launch (e.g., '24.04', 'daily:24.04'). Defaults to '24.04'.")
+	ann.Describe(&a.Cpus, "The number of CPUs to allocate to the instance. Defaults to 1.")
+	ann.Describe(&a.Memory, "The amount of RAM to allocate (e.g., '1G', '2048M'). Defaults to '1G'.")
+	ann.Describe(&a.Disk, "The disk size to allocate (e.g., '5G', '10G'). Defaults to '5G'.")
+	ann.Describe(&a.Cloudinit, "Path to a cloud-init user-data file or inline cloud-init configuration.")
+
 	ann.SetDefault(&a.Image, "24.04")
 	ann.SetDefault(&a.Cpus, 1)
 	ann.SetDefault(&a.Memory, "1G")
 	ann.SetDefault(&a.Disk, "5G")
 }
 
+func (a InstanceArgs) applyDefaults() InstanceArgs {
+	if a.Image == "" {
+		a.Image = "24.04"
+	}
+	if a.Cpus == 0 {
+		a.Cpus = 1
+	}
+	if a.Memory == "" {
+		a.Memory = "1G"
+	}
+	if a.Disk == "" {
+		a.Disk = "5G"
+	}
+	return a
+}
+
 // Create launches a new Multipass instance.
 func (i *Instance) Create(
-	ctx context.Context, name string, inputs InstanceArgs, preview bool,
-) (string, InstanceState, error) {
-	if preview {
-		return inputs.Name, InstanceState{InstanceArgs: inputs}, nil
+	ctx context.Context, req infer.CreateRequest[InstanceArgs],
+) (infer.CreateResponse[InstanceState], error) {
+
+	inputs := req.Inputs.applyDefaults()
+
+	if req.DryRun {
+		return infer.CreateResponse[InstanceState]{
+			ID:     inputs.Name,
+			Output: InstanceState{InstanceArgs: inputs},
+		}, nil
 	}
 
 	cfg := infer.GetConfig[Config](ctx)
 	client := multipass.NewClient(cfg.MultipassBin)
 
-	image := inputs.Image
-	if image == "" {
-		image = "24.04"
-	}
-	cpus := inputs.Cpus
-	if cpus == 0 {
-		cpus = 1
-	}
-	memory := inputs.Memory
-	if memory == "" {
-		memory = "1G"
-	}
-	disk := inputs.Disk
-	if disk == "" {
-		disk = "5G"
-	}
-
 	info, err := client.Launch(ctx, multipass.LaunchArgs{
 		Name:      inputs.Name,
-		Image:     image,
-		Cpus:      cpus,
-		Memory:    memory,
-		Disk:      disk,
+		Image:     inputs.Image,
+		Cpus:      inputs.Cpus,
+		Memory:    inputs.Memory,
+		Disk:      inputs.Disk,
 		Cloudinit: inputs.Cloudinit,
+		Timeout:   cfg.LaunchTimeout,
 	})
 	if err != nil {
 		// Idempotent create: if the instance already exists (e.g. due to a
@@ -93,53 +106,62 @@ func (i *Instance) Create(
 			existing, readErr := client.Info(ctx, inputs.Name)
 			if readErr == nil && existing != nil {
 				state := instanceInfoToState(inputs, existing)
-				return inputs.Name, state, nil
+				return infer.CreateResponse[InstanceState]{ID: inputs.Name, Output: state}, nil
 			}
 		}
-		return "", InstanceState{}, fmt.Errorf("launching instance %s: %w", inputs.Name, err)
+		return infer.CreateResponse[InstanceState]{}, fmt.Errorf("launching instance %s: %w", inputs.Name, err)
 	}
 
 	state := instanceInfoToState(inputs, info)
-	return inputs.Name, state, nil
+	return infer.CreateResponse[InstanceState]{ID: inputs.Name, Output: state}, nil
 }
 
 // Read refreshes the state of an existing Multipass instance.
 func (i *Instance) Read(
-	ctx context.Context, id string, inputs InstanceArgs, state InstanceState,
-) (string, InstanceArgs, InstanceState, error) {
+	ctx context.Context, req infer.ReadRequest[InstanceArgs, InstanceState],
+) (infer.ReadResponse[InstanceArgs, InstanceState], error) {
 	cfg := infer.GetConfig[Config](ctx)
 	client := multipass.NewClient(cfg.MultipassBin)
 
-	info, err := client.Info(ctx, id)
+	info, err := client.Info(ctx, req.ID)
 	if err != nil {
-		return "", inputs, state, fmt.Errorf("reading instance %s: %w", id, err)
+		return infer.ReadResponse[InstanceArgs, InstanceState]{}, fmt.Errorf("reading instance %s: %w", req.ID, err)
 	}
 	if info == nil {
-		// Signal not-found by returning empty ID.
-		return "", inputs, InstanceState{}, nil
+		// Signal not-found by returning an empty response (empty ID).
+		return infer.ReadResponse[InstanceArgs, InstanceState]{}, nil
 	}
 
-	newState := instanceInfoToState(inputs, info)
-	return id, inputs, newState, nil
+	newState := instanceInfoToState(req.Inputs, info)
+	return infer.ReadResponse[InstanceArgs, InstanceState]{
+		ID:     req.ID,
+		Inputs: req.Inputs,
+		State:  newState,
+	}, nil
 }
 
 // Delete removes an instance.
-func (i *Instance) Delete(ctx context.Context, id string, props InstanceState) error {
+func (i *Instance) Delete(ctx context.Context, req infer.DeleteRequest[InstanceState]) (infer.DeleteResponse, error) {
 	cfg := infer.GetConfig[Config](ctx)
 	client := multipass.NewClient(cfg.MultipassBin)
 
-	if err := client.Delete(ctx, id); err != nil {
-		return fmt.Errorf("deleting instance %s: %w", id, err)
+	if err := client.Delete(ctx, req.ID); err != nil {
+		return infer.DeleteResponse{}, fmt.Errorf("deleting instance %s: %w", req.ID, err)
 	}
-	return client.Purge(ctx)
+	return infer.DeleteResponse{}, client.Purge(ctx)
 }
 
 // Diff marks all input fields as requiring replacement.
 func (i *Instance) Diff(
-	ctx context.Context, id string, olds InstanceState, news InstanceArgs,
-) (p.DiffResponse, error) {
+	ctx context.Context, req infer.DiffRequest[InstanceArgs, InstanceState],
+) (infer.DiffResponse, error) {
+
+	olds := req.State
+	news := req.Inputs.applyDefaults()
+
 	diff := map[string]p.PropertyDiff{}
 	replaceFields := map[string]bool{
+		"name":      olds.Name != news.Name,
 		"image":     olds.Image != news.Image,
 		"cpus":      olds.Cpus != news.Cpus,
 		"memory":    olds.Memory != news.Memory,
@@ -159,7 +181,7 @@ func (i *Instance) Diff(
 	// name cannot coexist. Without this flag, Pulumi's default create-before-delete
 	// order calls Create with the existing name, which adopts the old VM, then deletes
 	// the "old" resource — which is now the newly-adopted VM. Net result: VM vanishes.
-	return p.DiffResponse{
+	return infer.DiffResponse{
 		DeleteBeforeReplace: hasChanges,
 		HasChanges:          hasChanges,
 		DetailedDiff:        diff,

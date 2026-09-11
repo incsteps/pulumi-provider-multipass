@@ -1,14 +1,14 @@
 package provider
 
 import (
-	"github.com/incsteps/pulumi-provider-multipass/functions"
 	"github.com/incsteps/pulumi-provider-multipass/resources"
+	p "github.com/pulumi/pulumi-go-provider"
 	"github.com/pulumi/pulumi-go-provider/infer"
 )
 
 const (
 	Name      = "multipass"
-	Version   = "v0.2.0"
+	Version   = "v0.3.0"
 	Namespace = "incsteps"
 
 	// Repository is the canonical source location. It also seeds the
@@ -22,10 +22,8 @@ const (
 )
 
 // Build returns the configured ProviderBuilder for the multipass provider.
-func Build() *infer.ProviderBuilder {
+func Build() (p.Provider, error) {
 	return infer.NewProviderBuilder().
-		WithName(Name).
-		WithVersion(Version).
 		WithNamespace(Namespace).
 		WithDisplayName("Multipass").
 		WithDescription("A Pulumi native provider for Canonical Multipass — declarative, snapshot-aware VM management via the multipass CLI.").
@@ -49,13 +47,10 @@ func Build() *infer.ProviderBuilder {
 				"respectSchemaVersion": true,
 			},
 		}).
-		WithConfig(infer.Config[resources.Config]()).
+		WithConfig(infer.Config(&resources.Config{})).
 		WithResources(
-			infer.Resource[*resources.Instance, resources.InstanceArgs, resources.InstanceState](),
-			infer.Resource[*resources.Snapshot, resources.SnapshotArgs, resources.SnapshotState](),
-			infer.Resource[*resources.Mount, resources.MountArgs, resources.MountState](),
+			infer.Resource[*resources.Instance, resources.InstanceArgs, resources.InstanceState](&resources.Instance{}),
+			infer.Resource[*resources.Mount, resources.MountArgs, resources.MountState](&resources.Mount{}),
 		).
-		WithFunctions(
-			infer.Function[*functions.Restore, functions.RestoreArgs, functions.RestoreResult](),
-		)
+		Build()
 }

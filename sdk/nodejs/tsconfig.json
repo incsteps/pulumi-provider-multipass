@@ -1,28 +1,31 @@
 {
     "compilerOptions": {
+        // Output
         "outDir": "bin",
-        "target": "ES2020",
-        "module": "commonjs",
-        "moduleResolution": "node",
         "declaration": true,
+        "declarationMap": true,
         "sourceMap": true,
         "stripInternal": true,
-        "experimentalDecorators": true,
+        // Environment
+        "target": "ES2022",
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
+        "moduleDetection": "force",
+        "types": ["node"],
+        // Type Checking
+        "strict": true,
         "noFallthroughCasesInSwitch": true,
-        "forceConsistentCasingInFileNames": true,
-        "strict": true
+        "noImplicitReturns": true,
+        "skipLibCheck": true
     },
     "files": [
         "config/index.ts",
         "config/vars.ts",
-        "functions/index.ts",
-        "functions/restore.ts",
         "index.ts",
         "provider.ts",
         "resources/index.ts",
         "resources/instance.ts",
         "resources/mount.ts",
-        "resources/snapshot.ts",
         "utilities.ts"
     ]
 }

@@ -15,11 +15,6 @@ export type Mount = import("./mount").Mount;
 export const Mount: typeof import("./mount").Mount = null as any;
 utilities.lazyLoad(exports, ["Mount"], () => require("./mount"));
 
-export { SnapshotArgs } from "./snapshot";
-export type Snapshot = import("./snapshot").Snapshot;
-export const Snapshot: typeof import("./snapshot").Snapshot = null as any;
-utilities.lazyLoad(exports, ["Snapshot"], () => require("./snapshot"));
-
 
 const _module = {
     version: utilities.getVersion(),
@@ -29,8 +24,6 @@ const _module = {
                 return new Instance(name, <any>undefined, { urn })
             case "multipass:resources:Mount":
                 return new Mount(name, <any>undefined, { urn })
-            case "multipass:resources:Snapshot":
-                return new Snapshot(name, <any>undefined, { urn })
             default:
                 throw new Error(`unknown resource type ${type}`);
         }
