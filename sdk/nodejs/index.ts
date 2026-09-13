@@ -13,12 +13,10 @@ utilities.lazyLoad(exports, ["Provider"], () => require("./provider"));
 
 // Export sub-modules:
 import * as config from "./config";
-import * as functions from "./functions";
 import * as resources from "./resources";
 
 export {
     config,
-    functions,
     resources,
 };
 pulumi.runtime.registerResourcePackage("multipass", {

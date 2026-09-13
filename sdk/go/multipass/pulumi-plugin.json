@@ -1,6 +1,6 @@
 {
   "resource": true,
   "name": "multipass",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "server": "github://api.github.com/incsteps/pulumi-provider-multipass"
 }
