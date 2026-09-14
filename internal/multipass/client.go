@@ -166,7 +166,7 @@ func (c *Client) Start(ctx context.Context, name string) error {
 
 // Delete removes the named instance. Idempotent — returns nil if instance is absent.
 func (c *Client) Delete(ctx context.Context, name string) error {
-	_, err := c.exec(ctx, c.bin, "delete", name)
+	_, err := c.exec(ctx, c.bin, "delete", "--purge", name)
 	if err != nil {
 		if strings.Contains(err.Error(), "does not exist") ||
 			strings.Contains(err.Error(), "not found") {

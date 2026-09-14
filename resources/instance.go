@@ -148,7 +148,7 @@ func (i *Instance) Delete(ctx context.Context, req infer.DeleteRequest[InstanceS
 	if err := client.Delete(ctx, req.ID); err != nil {
 		return infer.DeleteResponse{}, fmt.Errorf("deleting instance %s: %w", req.ID, err)
 	}
-	return infer.DeleteResponse{}, client.Purge(ctx)
+	return infer.DeleteResponse{}, nil
 }
 
 // Diff marks all input fields as requiring replacement.

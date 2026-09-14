@@ -6,15 +6,18 @@ layout: overview
 
 The Pulumi Multipass provider enables declarative management of [Canonical Multipass](https://multipass.run) virtual machines using Pulumi.
 
-Multipass is a tool to launch and manage Ubuntu virtual machines on macOS, Linux, and Windows. This provider turns Multipass VMs into first-class Pulumi resources, allowing you to describe multi-node local topologies in code, track changes, take snapshots, and destroy environments without relying on cloud infrastructure.
+Multipass is a tool to launch and manage Ubuntu virtual machines on macOS, Linux, and Windows. 
+This provider turns Multipass VMs into first-class Pulumi resources, allowing you to describe multi-node local topologies in code, track changes, and destroy environments without relying on cloud infrastructure.
 
 ## Installation
 
 The Multipass provider is distributed as GitHub releases. Install the resource plugin using the Pulumi CLI:
 
 ```bash
-pulumi plugin install resource multipass v0.2.0 --server github://api.github.com/incsteps/pulumi-provider-multipass
+pulumi plugin install resource multipass v0.3.1 --server github://api.github.com/incsteps/pulumi-provider-multipass
 ```
+
+    Once the provider will be included as part of the Pulumi Community Registry, this step will be unnecessary.
 
 Then add the SDK to your project:
 
