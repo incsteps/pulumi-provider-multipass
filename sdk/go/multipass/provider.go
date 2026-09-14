@@ -31,9 +31,6 @@ func NewProvider(ctx *pulumi.Context,
 	if args.MultipassBin == nil {
 		args.MultipassBin = pulumi.StringPtr("")
 	}
-	if args.OperationTimeout == nil {
-		args.OperationTimeout = pulumi.IntPtr(60)
-	}
 	opts = internal.PkgResourceDefaultOpts(opts)
 	var resource Provider
 	err := ctx.RegisterResource("pulumi:providers:multipass", name, args, &resource, opts...)
@@ -48,8 +45,6 @@ type providerArgs struct {
 	LaunchTimeout *int `pulumi:"launchTimeout"`
 	// Path to the multipass binary. Defaults to 'multipass' in PATH.
 	MultipassBin *string `pulumi:"multipassBin"`
-	// Seconds to wait for general CLI operations. Default 60.
-	OperationTimeout *int `pulumi:"operationTimeout"`
 }
 
 // The set of arguments for constructing a Provider resource.
@@ -58,8 +53,6 @@ type ProviderArgs struct {
 	LaunchTimeout pulumi.IntPtrInput
 	// Path to the multipass binary. Defaults to 'multipass' in PATH.
 	MultipassBin pulumi.StringPtrInput
-	// Seconds to wait for general CLI operations. Default 60.
-	OperationTimeout pulumi.IntPtrInput
 }
 
 func (ProviderArgs) ElementType() reflect.Type {

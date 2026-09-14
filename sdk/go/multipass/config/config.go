@@ -32,14 +32,3 @@ func GetMultipassBin(ctx *pulumi.Context) string {
 	value = ""
 	return value
 }
-
-// Seconds to wait for general CLI operations. Default 60.
-func GetOperationTimeout(ctx *pulumi.Context) int {
-	v, err := config.TryInt(ctx, "multipass:operationTimeout")
-	if err == nil {
-		return v
-	}
-	var value int
-	value = 60
-	return value
-}

@@ -37,7 +37,6 @@ export class Provider extends pulumi.ProviderResource {
         {
             resourceInputs["launchTimeout"] = pulumi.output((args?.launchTimeout) ?? 300).apply(JSON.stringify);
             resourceInputs["multipassBin"] = (args?.multipassBin) ?? "";
-            resourceInputs["operationTimeout"] = pulumi.output((args?.operationTimeout) ?? 60).apply(JSON.stringify);
         }
         opts = pulumi.mergeOptions(utilities.resourceOptsDefaults(), opts);
         super(Provider.__pulumiType, name, resourceInputs, opts);
@@ -56,8 +55,4 @@ export interface ProviderArgs {
      * Path to the multipass binary. Defaults to 'multipass' in PATH.
      */
     multipassBin?: pulumi.Input<string | undefined>;
-    /**
-     * Seconds to wait for general CLI operations. Default 60.
-     */
-    operationTimeout?: pulumi.Input<number | undefined>;
 }

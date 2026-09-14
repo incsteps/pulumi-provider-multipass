@@ -29,14 +29,3 @@ Object.defineProperty(exports, "multipassBin", {
     enumerable: true,
 });
 
-/**
- * Seconds to wait for general CLI operations. Default 60.
- */
-export declare const operationTimeout: number;
-Object.defineProperty(exports, "operationTimeout", {
-    get() {
-        return __config.getObject<number>("operationTimeout") ?? 60;
-    },
-    enumerable: true,
-});
-
