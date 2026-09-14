@@ -1,7 +1,7 @@
 {
   "name": "multipass",
   "displayName": "Multipass",
-  "version": "v0.3.0",
+  "version": "v0.3.1",
   "description": "A Pulumi native provider for Canonical Multipass — declarative, snapshot-aware VM management via the multipass CLI.",
   "keywords": [
     "pulumi",
@@ -37,11 +37,6 @@
         "type": "string",
         "description": "Path to the multipass binary. Defaults to 'multipass' in PATH.",
         "default": ""
-      },
-      "operationTimeout": {
-        "type": "integer",
-        "description": "Seconds to wait for general CLI operations. Default 60.",
-        "default": 60
       }
     }
   },
@@ -56,17 +51,11 @@
         "type": "string",
         "description": "Path to the multipass binary. Defaults to 'multipass' in PATH.",
         "default": ""
-      },
-      "operationTimeout": {
-        "type": "integer",
-        "description": "Seconds to wait for general CLI operations. Default 60.",
-        "default": 60
       }
     },
     "required": [
       "multipassBin",
-      "launchTimeout",
-      "operationTimeout"
+      "launchTimeout"
     ],
     "inputProperties": {
       "launchTimeout": {
@@ -78,11 +67,6 @@
         "type": "string",
         "description": "Path to the multipass binary. Defaults to 'multipass' in PATH.",
         "default": ""
-      },
-      "operationTimeout": {
-        "type": "integer",
-        "description": "Seconds to wait for general CLI operations. Default 60.",
-        "default": 60
       }
     }
   },
