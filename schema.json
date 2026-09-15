@@ -14,6 +14,7 @@
   "license": "Apache-2.0",
   "repository": "https://github.com/incsteps/pulumi-provider-multipass",
   "pluginDownloadURL": "github://api.github.com/incsteps/pulumi-provider-multipass",
+  "publisher": "incsteps",
   "namespace": "incsteps",
   "language": {
     "go": {
