@@ -10,6 +10,7 @@ const (
 	Name      = "multipass"
 	Version   = "v0.3.1"
 	Namespace = "incsteps"
+	Publisher = "incsteps"
 
 	// Repository is the canonical source location. It also seeds the
 	// PluginDownloadURL below, which is what lets `pulumi plugin install`
@@ -25,6 +26,7 @@ const (
 func Build() (p.Provider, error) {
 	return infer.NewProviderBuilder().
 		WithNamespace(Namespace).
+		WithPublisher(Publisher).
 		WithDisplayName("Multipass").
 		WithDescription("A Pulumi native provider for Canonical Multipass — declarative, snapshot-aware VM management via the multipass CLI.").
 		WithKeywords("pulumi", "multipass", "vm", "canonical", "category/infrastructure").
