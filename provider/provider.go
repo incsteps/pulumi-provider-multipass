@@ -8,7 +8,7 @@ import (
 
 const (
 	Name      = "multipass"
-	Version   = "v0.3.1"
+	Version   = "v0.3.2"
 	Namespace = "incsteps"
 	Publisher = "incsteps"
 
