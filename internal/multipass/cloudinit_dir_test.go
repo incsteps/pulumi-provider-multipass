@@ -33,7 +33,7 @@ func TestCloudInitDir_LinuxAvoidsTmp(t *testing.T) {
 	if !strings.HasPrefix(got, home) {
 		t.Errorf("expected a path under %q so snap confinement can read it, got %q", home, got)
 	}
-	if want := filepath.Join(home, ".cache", "pulumi-multipass"); got != want {
+	if want := filepath.Join(home, "snap", "multipass", "common"); got != want {
 		t.Errorf("expected %q, got %q", want, got)
 	}
 }
