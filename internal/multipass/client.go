@@ -69,8 +69,14 @@ func cloudInitDir() string {
 	if err != nil {
 		return ""
 	}
-	d := filepath.Join(home, ".cache", "pulumi-multipass")
-	if err := os.MkdirAll(d, 0o700); err != nil {
+
+	snapCommonDir := filepath.Join(home, "snap", "multipass", "common")
+	if _, err := os.Stat(snapCommonDir); err == nil {
+		return snapCommonDir
+	}
+
+	d := filepath.Join(home, "pulumi", "multipass")
+	if err := os.MkdirAll(d, 0o755); err != nil {
 		return ""
 	}
 	return d
