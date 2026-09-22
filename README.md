@@ -12,17 +12,11 @@ diffed, snapshotted, and torn down without cloud spend.
 
 ## Resources
 
-| Resource | Description |
-|---|---|
+| Resource | Description                                                  |
+|---|--------------------------------------------------------------|
 | `multipass.Instance` | Provision a VM (name, image, CPUs, memory, disk, cloud-init) |
-| `multipass.Snapshot` | Capture a named snapshot of a VM |
-| `multipass.Mount` | Mount a host directory into a running VM |
+| `multipass.Mount` | Mount a host directory into a running VM (In progress)    |
 
-## Functions
-
-| Function | Description |
-|---|---|
-| `multipass.restore` | Restore a VM from a named snapshot (via the Pulumi Automation API) |
 
 ## Provider config
 
@@ -34,12 +28,8 @@ diffed, snapshotted, and torn down without cloud spend.
 
 ## Install
 
-The provider is distributed as GitHub release assets rather than through the public Pulumi registry.
-`pluginDownloadURL` is baked into the schema, so the CLI knows where to look:
-
 ```bash
-pulumi plugin install resource multipass v0.2.0 \
-  --server github://api.github.com/incsteps/pulumi-provider-multipass
+pulumi plugin install resource incsteps/multipass
 ```
 
 Then add the SDK to your project:
