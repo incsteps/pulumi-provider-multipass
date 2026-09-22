@@ -11,13 +11,11 @@ This provider turns Multipass VMs into first-class Pulumi resources, allowing yo
 
 ## Installation
 
-The Multipass provider is distributed as GitHub releases. Install the resource plugin using the Pulumi CLI:
+Install the resource plugin using the Pulumi CLI:
 
 ```bash
-pulumi plugin install resource multipass v0.3.1 --server github://api.github.com/incsteps/pulumi-provider-multipass
+pulumi plugin install resource incsteps/multipass
 ```
-
-    Once the provider will be included as part of the Pulumi Community Registry, this step will be unnecessary.
 
 Then add the SDK to your project:
 
