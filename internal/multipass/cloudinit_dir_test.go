@@ -34,7 +34,9 @@ func TestCloudInitDir_LinuxAvoidsTmp(t *testing.T) {
 		t.Errorf("expected a path under %q so snap confinement can read it, got %q", home, got)
 	}
 	if want := filepath.Join(home, "snap", "multipass", "common"); got != want {
-		t.Errorf("expected %q, got %q", want, got)
+		if want := filepath.Join(home, "pulumi", "multipass"); got != want { // Github doesnt have snap multipass installed
+			t.Errorf("expected %q, got %q", want, got)
+		}
 	}
 }
 
